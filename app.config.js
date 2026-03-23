@@ -2,8 +2,11 @@
 // EAS Build does not load .env when reading config — set EXPO_PUBLIC_GOOGLE_CLIENT_ID for production builds.
 const webClientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
 const clientIdPart = webClientId.replace(/\.apps\.googleusercontent\.com$/, '');
+// Plugin requires a non-empty iosUrlScheme; use placeholder until .env has a real Web client ID.
 const iosUrlScheme =
-  webClientId && clientIdPart ? `com.googleusercontent.apps.${clientIdPart}` : undefined;
+  webClientId && clientIdPart
+    ? `com.googleusercontent.apps.${clientIdPart}`
+    : 'com.googleusercontent.apps.placeholder';
 
 module.exports = {
   expo: {
@@ -52,7 +55,7 @@ module.exports = {
       ['expo-dev-client', { launchMode: 'launcher' }],
       'expo-router',
       'expo-apple-authentication',
-      ['@react-native-google-signin/google-signin', iosUrlScheme ? { iosUrlScheme } : {}],
+      ['@react-native-google-signin/google-signin', { iosUrlScheme }],
     ],
     experiments: { typedRoutes: true },
     extra: { router: {} },
