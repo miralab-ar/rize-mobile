@@ -8,7 +8,7 @@ Mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — sc
 
 ## Overview
 
-Rize is a fresh codebase for your product: same stack and layout as Matchpoint (tabs, auth, API under `api/`, TanStack Query, NativeWind). Replace screens and domain logic as you define the Rize feature set.
+Rize is a **calisthenics** app scaffold: **Home** (month calendar + per-day workout summary), **Workouts** (session list), **Exercises** (reference catalog), **Profile**. Workout data is local sample data in `store/useWorkoutLogStore.ts` until you wire MongoDB or another backend.
 
 Targets **Android** and **iOS** (Expo prebuild / EAS).
 

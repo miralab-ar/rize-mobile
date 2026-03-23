@@ -1,6 +1,5 @@
 /**
- * Rize API client
- * Calls the Vercel backend (MongoDB)
+ * Rize API client — Vercel backend (MongoDB)
  */
 
 import { config } from './config';
@@ -37,75 +36,6 @@ function apiRequest<T>(
     return data as T;
   });
 }
-
-// Tournaments
-export const tournamentsApi = {
-  find: (params?: { status?: string; organizerId?: string; inviteLink?: string }) =>
-    apiRequest<unknown[]>('/api/tournaments', { params: params as Record<string, string> }),
-
-  findOne: (id: string) => apiRequest<unknown>(`/api/tournaments/${id}`),
-
-  insertOne: (document: Record<string, unknown>) =>
-    apiRequest<unknown>('/api/tournaments', {
-      method: 'POST',
-      body: JSON.stringify(document),
-    }),
-
-  updateOne: (id: string, update: Record<string, unknown>) =>
-    apiRequest<unknown>(`/api/tournaments/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(update),
-    }),
-
-  deleteOne: (id: string) =>
-    apiRequest<void>(`/api/tournaments/${id}`, { method: 'DELETE' }),
-};
-
-// Entries
-export const entriesApi = {
-  find: (params?: { tournamentId?: string; userId?: string; teamId?: string }) =>
-    apiRequest<unknown[]>('/api/entries', { params: params as Record<string, string> }),
-
-  findOne: (id: string) => apiRequest<unknown>(`/api/entries/${id}`),
-
-  insertOne: (document: Record<string, unknown>) =>
-    apiRequest<unknown>('/api/entries', {
-      method: 'POST',
-      body: JSON.stringify(document),
-    }),
-
-  updateOne: (id: string, update: Record<string, unknown>) =>
-    apiRequest<unknown>(`/api/entries/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(update),
-    }),
-
-  deleteOne: (id: string) =>
-    apiRequest<void>(`/api/entries/${id}`, { method: 'DELETE' }),
-};
-
-// Teams
-export const teamsApi = {
-  find: (params?: { tournamentId?: string; createdBy?: string }) =>
-    apiRequest<unknown[]>('/api/teams', { params: params as Record<string, string> }),
-
-  findOne: (id: string) => apiRequest<unknown>(`/api/teams/${id}`),
-
-  insertOne: (document: Record<string, unknown>) =>
-    apiRequest<unknown>('/api/teams', {
-      method: 'POST',
-      body: JSON.stringify(document),
-    }),
-
-  updateOne: (id: string, update: Record<string, unknown>) =>
-    apiRequest<unknown>(`/api/teams/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(update),
-    }),
-
-  deleteOne: (id: string) =>
-    apiRequest<void>(`/api/teams/${id}`, { method: 'DELETE' }),
-};
 
 // Auth
 export const authApi = {
@@ -168,10 +98,7 @@ export const usersApi = {
     apiRequest<unknown>('/api/users', { params: params as Record<string, string> }),
 
   findByIds: (ids: string[]) =>
-    apiRequest<unknown[]>(
-      '/api/users',
-      { params: { ids: ids.filter(Boolean).join(',') } }
-    ),
+    apiRequest<unknown[]>('/api/users', { params: { ids: ids.filter(Boolean).join(',') } }),
 
   insertOne: (document: Record<string, unknown>) =>
     apiRequest<unknown>('/api/users', {

@@ -10,29 +10,37 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: Colors.tabIconSelected,
         tabBarInactiveTintColor: Colors.tabIconDefault,
         tabBarStyle: { backgroundColor: Colors.surface },
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '500' },
-        headerStyle: { backgroundColor: Colors.background },
-        headerTintColor: Colors.text,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.tournaments'),
+          title: t('tabs.home'),
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'trophy', android: 'sports_esports', web: 'sports_esports' }} tintColor={color} size={24} />
+            <SymbolView name={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }} tintColor={color} size={24} />
           ),
         }}
       />
       <Tabs.Screen
-        name="entries"
+        name="workouts"
         options={{
-          title: t('tabs.myEntries'),
+          title: t('tabs.workouts'),
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'person.2', android: 'group', web: 'group' }} tintColor={color} size={24} />
+            <SymbolView name={{ ios: 'figure.strengthtraining.traditional', android: 'fitness_center', web: 'fitness_center' }} tintColor={color} size={24} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="exercises"
+        options={{
+          title: t('tabs.exercises'),
+          tabBarIcon: ({ color }) => (
+            <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={24} />
           ),
         }}
       />

@@ -1,5 +1,5 @@
 # Rize Mobile — product notes
 
-This repository was scaffolded from the **Matchpoint** app structure (Expo Router, `api/` on Vercel, MongoDB, auth, i18n).
+Scaffold: Expo Router, Vercel `api/` (auth + users), MongoDB, i18n.
 
-Use this file (or your own planning doc) for Rize-specific roadmap, scope, and milestones. Tournament-related UI and copy are placeholders until you replace them with Rize features.
+**App tabs:** Home (calendar), Workouts, Exercises, Profile. Training log is mocked in Zustand (`store/useWorkoutLogStore.ts`). Next steps: persist workouts (AsyncStorage / API), log-workout flow, real exercise library.

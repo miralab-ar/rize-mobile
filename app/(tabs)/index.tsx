@@ -1,61 +1,87 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import Colors from '@/constants/Colors';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { useTournaments } from '@/lib/hooks/useTournaments';
-import { formatTournamentDate } from '@/lib/utils/dateFormat';
-import type { Tournament } from '@/types';
+import { useWorkoutLogStore } from '@/store/useWorkoutLogStore';
+import { toISODate, formatDisplayDate } from '@/lib/utils/dateFormat';
 
-export default function TournamentsScreen() {
+export default function HomeScreen() {
   const { t } = useTranslation();
-  const { data: tournaments = [], isLoading, isError, error } = useTournaments();
+  const sessions = useWorkoutLogStore((s) => s.sessions);
+  const sessionsOn = useWorkoutLogStore((s) => s.sessionsOn);
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.scrollContent}>
-          {[1, 2, 3].map((i) => (
-            <View key={i} style={styles.card}>
-              <Skeleton height={22} width="70%" style={{ marginBottom: 8 }} />
-              <Skeleton height={16} width="40%" style={{ marginBottom: 4 }} />
-              <Skeleton height={16} width="50%" style={{ marginBottom: 8 }} />
-              <Skeleton height={14} width="30%" />
-            </View>
-          ))}
-        </View>
-      </View>
-    );
-  }
+  const [selected, setSelected] = useState(() => toISODate(new Date()));
 
-  if (isError) {
-    return (
-      <View style={[styles.container, styles.errorContainer]}>
-        <Text style={styles.errorText}>{error?.message || t('tournaments.failedToLoad')}</Text>
-      </View>
-    );
-  }
+  const markedDates = useMemo(() => {
+    const marks: Record<string, { marked?: boolean; dotColor?: string; selected?: boolean; selectedColor?: string }> =
+      {};
+    for (const s of sessions) {
+      const prev = marks[s.date];
+      marks[s.date] = {
+        ...prev,
+        marked: true,
+        dotColor: Colors.yellow,
+      };
+    }
+    const sel = marks[selected] ?? {};
+    marks[selected] = {
+      ...sel,
+      selected: true,
+      selectedColor: Colors.violet,
+    };
+    return marks;
+  }, [sessions, selected]);
+
+  const daySessions = sessionsOn(selected);
+  const totalMin = daySessions.reduce((acc, s) => acc + (s.durationMin ?? 0), 0);
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        {(tournaments as Tournament[]).map((tournament) => (
-          <Link key={tournament._id} href={`/tournament/${tournament._id}`} asChild>
-            <Pressable style={styles.card}>
-              <Text style={styles.cardTitle}>{tournament.name}</Text>
-              <Text style={styles.cardDate}>{formatTournamentDate(tournament.date)}</Text>
-              <Text style={styles.cardLocation}>{tournament.location}</Text>
-              <Text style={styles.cardSpots}>{t('tournaments.teamsMax', { count: tournament.maxTeams ?? 16 })}</Text>
-            </Pressable>
-          </Link>
-        ))}
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={styles.screenTitle}>{t('home.title')}</Text>
+
+        <Calendar
+          current={selected}
+          onDayPress={(day) => setSelected(day.dateString)}
+          markedDates={markedDates}
+          enableSwipeMonths
+          theme={{
+            backgroundColor: Colors.background,
+            calendarBackground: Colors.background,
+            textSectionTitleColor: Colors.textSecondary,
+            todayTextColor: Colors.yellow,
+            dayTextColor: Colors.text,
+            textDisabledColor: Colors.textMuted,
+            monthTextColor: Colors.text,
+            arrowColor: Colors.yellow,
+            selectedDayBackgroundColor: Colors.violet,
+            selectedDayTextColor: '#fff',
+            dotColor: Colors.yellow,
+          }}
+        />
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>{formatDisplayDate(selected)}</Text>
+          <Text style={styles.summary}>
+            {daySessions.length === 0
+              ? t('home.noSessions')
+              : `${t('home.summarySessions', { count: daySessions.length })}${
+                  totalMin > 0 ? ` · ${t('home.minutesTotal', { n: totalMin })}` : ''
+                }`}
+          </Text>
+          {daySessions.map((s) => (
+            <View key={s.id} style={styles.sessionRow}>
+              <Text style={styles.sessionTitle}>{s.title}</Text>
+              {s.durationMin != null ? (
+                <Text style={styles.sessionMeta}>{t('home.minutes', { n: s.durationMin })}</Text>
+              ) : null}
+            </View>
+          ))}
+        </View>
+
+        <Text style={styles.hint}>{t('home.monthHint')}</Text>
       </ScrollView>
-      <Link href="/tournament/create" asChild>
-        <Pressable style={styles.fab}>
-          <Text style={styles.fabText}>{t('tournaments.createButton')}</Text>
-        </Pressable>
-      </Link>
     </View>
   );
 }
@@ -66,60 +92,51 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scroll: {
-    flex: 1,
-  },
-  scrollContent: {
     padding: 16,
-    paddingBottom: 80,
+    paddingBottom: 32,
+  },
+  screenTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: 12,
   },
   card: {
     backgroundColor: Colors.surface,
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
+    marginTop: 8,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
-    marginBottom: 4,
-  },
-  cardDate: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    marginBottom: 2,
-  },
-  cardLocation: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    color: Colors.yellow,
     marginBottom: 8,
   },
-  cardSpots: {
-    fontSize: 12,
-    color: Colors.yellow,
+  summary: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    marginBottom: 12,
   },
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    backgroundColor: Colors.yellow,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+  sessionRow: {
+    paddingVertical: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: Colors.surfaceLight,
   },
-  fabText: {
+  sessionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1a1a1a',
+    color: Colors.text,
   },
-  errorContainer: {
-    padding: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+  sessionMeta: {
+    fontSize: 13,
+    color: Colors.textMuted,
+    marginTop: 2,
   },
-  errorText: {
-    fontSize: 16,
-    color: Colors.textSecondary,
+  hint: {
+    fontSize: 12,
+    color: Colors.textMuted,
+    marginTop: 16,
     textAlign: 'center',
   },
 });

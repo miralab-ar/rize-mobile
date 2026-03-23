@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Platform, Pressable, Modal } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useTranslation } from '@/lib/i18n';
-import { formatTournamentDate, toISODate } from '@/lib/utils/dateFormat';
+import { formatDisplayDate, toISODate } from '@/lib/utils/dateFormat';
 
 type DatePickerFieldProps = {
   value: string;
@@ -31,7 +31,7 @@ export function DatePickerField({
   const { t, i18n } = useTranslation();
   const [show, setShow] = useState(false);
   const locale = i18n.locale || 'en';
-  const displayValue = value ? formatTournamentDate(value, locale) : t('common.selectDate');
+  const displayValue = value ? formatDisplayDate(value, locale) : t('common.selectDate');
 
   const d = value ? new Date(value + 'T12:00:00') : new Date(minDate);
   const [viewYear, setViewYear] = useState(d.getFullYear());
