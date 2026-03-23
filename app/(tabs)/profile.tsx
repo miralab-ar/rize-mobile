@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { View, Text, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { getGoogleSignin } from '@/lib/native/googleSignIn';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import Colors from '@/constants/Colors';
@@ -27,7 +27,8 @@ export default function ProfileScreen() {
 
   const handleSignOut = async () => {
     try {
-      await GoogleSignin.signOut();
+      const G = getGoogleSignin();
+      if (G) await G.signOut();
     } catch (_) {}
     signOut();
     router.replace('/(auth)/sign-in');

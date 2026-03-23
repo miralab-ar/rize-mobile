@@ -5,8 +5,7 @@ import {
   Image, Pressable, TextInput, KeyboardAvoidingView, ScrollView,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import * as AppleAuthentication from 'expo-apple-authentication';
+import { getGoogleSignin } from '@/lib/native/googleSignIn';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { config } from '@/lib/config';
@@ -26,8 +25,9 @@ export default function SignInScreen() {
   const nextRoute = typeof redirect === 'string' && redirect.startsWith('/') ? redirect : '/(tabs)';
 
   useEffect(() => {
-    if (Platform.OS !== 'web') {
-      GoogleSignin.configure({
+    const G = getGoogleSignin();
+    if (G) {
+      G.configure({
         webClientId: config.google.clientId,
         offlineAccess: false,
       });
@@ -35,6 +35,11 @@ export default function SignInScreen() {
   }, []);
 
   async function handleGooglePress() {
+    const G = getGoogleSignin();
+    if (!G) {
+      Alert.alert(t('common.error'), t('auth.googleRequiresDevBuild'));
+      return;
+    }
     if (!config.google.isConfigured) {
       Alert.alert(t('common.error'), t('auth.googleNotConfigured'));
       return;
@@ -42,9 +47,9 @@ export default function SignInScreen() {
     setLoading(true);
     try {
       if (Platform.OS === 'android') {
-        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        await G.hasPlayServices({ showPlayServicesUpdateDialog: true });
       }
-      const result = await GoogleSignin.signIn();
+      const result = await G.signIn();
       if (result.type === 'cancelled') { setLoading(false); return; }
       if (result.type === 'success' && result.data?.idToken) {
         const user = (await authApi.signInWithGoogle(result.data.idToken)) as User;
@@ -61,7 +66,9 @@ export default function SignInScreen() {
   }
 
   async function handleApplePress() {
+    if (Platform.OS !== 'ios') return;
     try {
+      const AppleAuthentication = await import('expo-apple-authentication');
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -106,6 +113,10 @@ export default function SignInScreen() {
   }
 
   const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.miralab.rizemobile';
+
+  const googleAvailable = getGoogleSignin() != null;
+  const showApple = Platform.OS === 'ios';
+  const showSocialBlock = googleAvailable || showApple;
 
   if (Platform.OS === 'web') {
     return (
@@ -183,40 +194,44 @@ export default function SignInScreen() {
           </Pressable>
         </View>
 
-        {/* Divider */}
-        <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>{t('auth.orSignInWith')}</Text>
-          <View style={styles.dividerLine} />
-        </View>
+        {showSocialBlock ? (
+          <>
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>{t('auth.orSignInWith')}</Text>
+              <View style={styles.dividerLine} />
+            </View>
 
-        {/* Social buttons */}
-        <View style={styles.socialSection}>
-          <Pressable
-            style={({ pressed }) => [styles.googleButton, (pressed || loading) && styles.googleButtonPressed]}
-            onPress={handleGooglePress}
-            disabled={loading}
-          >
-            <Image
-              source={require('@/assets/images/google-logo-transparent.png')}
-              style={styles.googleLogo}
-            />
-            <Text style={styles.googleButtonText}>
-              {loading ? t('auth.signingIn') : t('auth.continueWithGoogle')}
-            </Text>
-          </Pressable>
+            <View style={styles.socialSection}>
+              {googleAvailable ? (
+                <Pressable
+                  style={({ pressed }) => [styles.googleButton, (pressed || loading) && styles.googleButtonPressed]}
+                  onPress={handleGooglePress}
+                  disabled={loading}
+                >
+                  <Image
+                    source={require('@/assets/images/google-logo-transparent.png')}
+                    style={styles.googleLogo}
+                  />
+                  <Text style={styles.googleButtonText}>
+                    {loading ? t('auth.signingIn') : t('auth.continueWithGoogle')}
+                  </Text>
+                </Pressable>
+              ) : null}
 
-          {Platform.OS === 'ios' && (
-            <Pressable
-              style={({ pressed }) => [styles.googleButton, pressed && styles.googleButtonPressed]}
-              onPress={handleApplePress}
-              disabled={loading}
-            >
-              <Ionicons name="logo-apple" size={22} color="#e3e3e3" />
-              <Text style={styles.googleButtonText}>{t('auth.continueWithApple')}</Text>
-            </Pressable>
-          )}
-        </View>
+              {showApple ? (
+                <Pressable
+                  style={({ pressed }) => [styles.googleButton, pressed && styles.googleButtonPressed]}
+                  onPress={handleApplePress}
+                  disabled={loading}
+                >
+                  <Ionicons name="logo-apple" size={22} color="#e3e3e3" />
+                  <Text style={styles.googleButtonText}>{t('auth.continueWithApple')}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          </>
+        ) : null}
 
         {/* Sign up */}
         <Pressable

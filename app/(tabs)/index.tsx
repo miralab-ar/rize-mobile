@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Calendar } from 'react-native-calendars';
 import Colors from '@/constants/Colors';
+import { SimpleMonthGrid } from '@/components/calendar/SimpleMonthGrid';
 import { useWorkoutLogStore } from '@/store/useWorkoutLogStore';
 import { toISODate, formatDisplayDate } from '@/lib/utils/dateFormat';
 
@@ -14,24 +14,12 @@ export default function HomeScreen() {
   const [selected, setSelected] = useState(() => toISODate(new Date()));
 
   const markedDates = useMemo(() => {
-    const marks: Record<string, { marked?: boolean; dotColor?: string; selected?: boolean; selectedColor?: string }> =
-      {};
+    const set = new Set<string>();
     for (const s of sessions) {
-      const prev = marks[s.date];
-      marks[s.date] = {
-        ...prev,
-        marked: true,
-        dotColor: Colors.yellow,
-      };
+      set.add(s.date);
     }
-    const sel = marks[selected] ?? {};
-    marks[selected] = {
-      ...sel,
-      selected: true,
-      selectedColor: Colors.violet,
-    };
-    return marks;
-  }, [sessions, selected]);
+    return set;
+  }, [sessions]);
 
   const daySessions = sessionsOn(selected);
   const totalMin = daySessions.reduce((acc, s) => acc + (s.durationMin ?? 0), 0);
@@ -41,25 +29,7 @@ export default function HomeScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.screenTitle}>{t('home.title')}</Text>
 
-        <Calendar
-          current={selected}
-          onDayPress={(day) => setSelected(day.dateString)}
-          markedDates={markedDates}
-          enableSwipeMonths
-          theme={{
-            backgroundColor: Colors.background,
-            calendarBackground: Colors.background,
-            textSectionTitleColor: Colors.textSecondary,
-            todayTextColor: Colors.yellow,
-            dayTextColor: Colors.text,
-            textDisabledColor: Colors.textMuted,
-            monthTextColor: Colors.text,
-            arrowColor: Colors.yellow,
-            selectedDayBackgroundColor: Colors.violet,
-            selectedDayTextColor: '#fff',
-            dotColor: Colors.yellow,
-          }}
-        />
+        <SimpleMonthGrid selected={selected} onSelectDay={setSelected} markedDates={markedDates} />
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{formatDisplayDate(selected)}</Text>
@@ -105,7 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: 12,
     padding: 16,
-    marginTop: 8,
+    marginTop: 16,
   },
   cardTitle: {
     fontSize: 16,

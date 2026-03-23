@@ -51,6 +51,7 @@
     "webSignInOnly": "Sign in is only available in the app. Install Rize from the Play Store to get started.",
     "getOnPlayStore": "Get Rize on Play Store",
     "googleNotConfigured": "Google sign-in is not configured. Add EXPO_PUBLIC_GOOGLE_CLIENT_ID to .env",
+    "googleRequiresDevBuild": "Google Sign-In is not available in Expo Go. Use email/password or run a development build (npx expo run:android).",
     "googleTokenMissing": "Could not get token from Google",
     "googleSignInFailed": "Google sign-in failed",
     "appleTokenMissing": "Apple did not return an identity token",
