@@ -30,10 +30,10 @@ npm run start:tunnel
 Espera hasta ver **"Tunnel ready"**. En la terminal aparecerá algo como:
 
 ```
-Metro: exp+rize-mobile://expo-development-client/?url=https%3A%2F%2FXXXXX-octapf-8081.exp.direct
+Metro: exp+rize-mobile://expo-development-client/?url=https%3A%2F%2FXXXXX-<usuario-expo>-8081.exp.direct
 ```
 
-La URL que necesitas es: **https://XXXXX-octapf-8081.exp.direct** (copia la parte entre `url=` y el final, decodificada).
+La URL que necesitas es: **https://XXXXX-<usuario-expo>-8081.exp.direct** (copia la parte entre `url=` y el final, decodificada).
 
 ## Paso 2: Limpiar la app en el teléfono
 
@@ -44,7 +44,7 @@ La URL que necesitas es: **https://XXXXX-octapf-8081.exp.direct** (copia la part
 
 1. Abre Rize **tocando el icono** (no escanees el QR).
 2. Debería aparecer la pantalla de **launcher** con "Enter URL manually".
-3. Pega la URL: `https://XXXXX-octapf-8081.exp.direct` (la que salió en la terminal).
+3. Pega la URL: `https://XXXXX-<usuario-expo>-8081.exp.direct` (la que salió en la terminal).
 4. Confirma / Enter.
 5. La app debería cargar el bundle desde Metro.
 

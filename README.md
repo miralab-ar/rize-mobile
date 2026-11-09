@@ -1,6 +1,6 @@
 # Rize Mobile
 
-Mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — scaffolded from the same structure as [Matchpoint](https://github.com/octapf/matchpoint) (Miralab).
+Mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — scaffolded from the same structure as [Matchpoint](https://github.com/miralab-ar/matchpoint) (Miralab).
 
 **By [Miralab](https://miralab.ar)**
 
