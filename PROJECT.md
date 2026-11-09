@@ -1,4 +1,4 @@
-# Rize Mobile — product notes
+# Rize — product notes
 
 Scaffold: Expo Router, Vercel `api/` (auth + users), MongoDB, i18n.
 

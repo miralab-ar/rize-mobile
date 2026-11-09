@@ -1,6 +1,6 @@
-# Rize Mobile
+# Rize
 
-Mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — scaffolded from the same structure as [Matchpoint](https://github.com/miralab-ar/matchpoint) (Miralab).
+Prototype of a calisthenics mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — scaffolded from the same structure as [Matchpoint](https://github.com/miralab-ar/matchpoint) (Miralab). The npm package and repository are named `rize-mobile`.
 
 **By [Miralab](https://miralab.ar)**
 
@@ -8,7 +8,7 @@ Mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — sc
 
 ## Overview
 
-Rize is a **calisthenics** app scaffold: **Home** (month calendar + per-day workout summary), **Workouts** (session list), **Exercises** (reference catalog), **Profile**. Workout data is local sample data in `store/useWorkoutLogStore.ts` until you wire MongoDB or another backend.
+Rize is a **calisthenics** app prototype: **Home** (month calendar + per-day workout summary), **Workouts** (session list), **Exercises** (reference catalog), **Profile**. Workout data is local sample data in `store/useWorkoutLogStore.ts` until you wire MongoDB or another backend.
 
 Targets **Android** and **iOS** (Expo prebuild / EAS).
 
@@ -96,4 +96,4 @@ Configure `eas.json` and add environment variables in the EAS dashboard. Use a P
 
 ## License
 
-Private — Miralab.
+© Miralab. All rights reserved.

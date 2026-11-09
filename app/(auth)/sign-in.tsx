@@ -242,7 +242,7 @@ export default function SignInScreen() {
         </Pressable>
 
         {/* Terms */}
-        <Pressable onPress={() => Linking.openURL('https://www.miralab.ar/es/rize/privacy')}>
+        <Pressable onPress={() => Linking.openURL('https://miralab.ar/es/rize/privacy')}>
           <Text style={styles.termsText}>{t('auth.termsAndConditions')}</Text>
         </Pressable>
 
