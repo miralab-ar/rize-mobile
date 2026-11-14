@@ -1,3 +1,5 @@
+> **Archivado.** Este prototipo fue reemplazado por la nueva Rize: https://rize.miralab.ar
+
 # Rize
 
 Prototype of a calisthenics mobile app (Expo + React Native) with a Vercel serverless API and MongoDB — scaffolded from the same structure as [Matchpoint](https://github.com/miralab-ar/matchpoint) (Miralab). The npm package and repository are named `rize-mobile`.
